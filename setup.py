@@ -14,10 +14,16 @@ try:
 except:
     README = ""
 CHANGELOG = open(os.path.join(here, 'CHANGELOG.rst'), encoding='utf-8').read()
-version_spec = importlib.util.spec_from_file_location(
-    'version', os.path.join(here, 'src/%s/version.py' % PACKAGE_NAME))
-version = importlib.util.module_from_spec(version_spec)
-version_spec.loader.exec_module(version)
+try:
+    version_spec = importlib.util.spec_from_file_location(
+        'version', os.path.join(here, 'src/%s/version.py' % PACKAGE_NAME))
+    version = importlib.util.module_from_spec(version_spec)
+    version_spec.loader.exec_module(version)
+except AttributeError:
+    from importlib.machinery import SourceFileLoader
+    version = SourceFileLoader(
+        'version',
+        os.path.join(here, 'src/%s/version.py' % PACKAGE_NAME)).load_module()
 VERSION = version.__version__
 
 from setuptools import setup, find_packages
